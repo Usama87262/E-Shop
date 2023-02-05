@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace E_Shop.Database
 {
-    class E_ShopContext : DbContext
+   public class E_ShopContext : DbContext,IDisposable
     {
         public E_ShopContext() : base("E-ShopConnection")
         {

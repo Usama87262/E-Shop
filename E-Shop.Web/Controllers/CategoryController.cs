@@ -13,6 +13,13 @@ namespace E_Shop.Web.Controllers
         CategoriesService Catservices = new CategoriesService();
 
         [HttpGet]
+        public ActionResult Index()
+        {
+            var catlist = Catservices.GetCategory();
+            return View(catlist);
+        }
+
+        [HttpGet]
         public ActionResult Create()
         {
             return View();
@@ -22,8 +29,37 @@ namespace E_Shop.Web.Controllers
         public ActionResult Create(Category Category)
         {
             Catservices.AddCategory(Category);
-            return View();
+            return RedirectToAction("Index");
         }
 
+        [HttpGet]
+        public ActionResult Edit(int Id)
+        {
+            var catid = Catservices.getCatId(Id);
+            return View(catid);
+        }
+
+        [HttpPost]
+        public ActionResult Edit(Category category)
+        {
+            Catservices.UpdateCat(category);
+            return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        public ActionResult Delete(int Id)
+        {
+            var catid = Catservices.getCatId(Id);
+            return View(catid);
+        }
+
+        [HttpPost]
+        public ActionResult Delete(Category category)
+        {
+            Catservices.DeleteCat(category.Id);
+            return RedirectToAction("Index");
+            
+            
+        }
     }
 }

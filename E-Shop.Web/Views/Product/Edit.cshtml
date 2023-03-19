@@ -1,0 +1,113 @@
+﻿@model E_Shop.Web.ViewModel.EditProductViewModel
+
+@{
+    ViewBag.Title = "Edit";
+
+    var imageurl = !string.IsNullOrEmpty(Model.ImageUrl) ? Model.ImageUrl : "~/Images/empty-image.png";
+
+}
+
+
+@*<form id="editproduct">
+
+    <input type="hidden" name="Id" value="@Model.Id" />
+
+    <label>Name</label>
+    <input name="Name" id="pname" value="@Model.Name" />
+    <br />
+
+    <label>Description</label>
+    <input name="Description" id="pdesc" value="@Model.Description" />
+    <br />
+
+    <label>Price</label>
+    <input name="Price" id="pprice" value="@Model.Price" />
+    <br />
+
+    <button type="button" id="updatebtn">Update</button>
+
+</form>*@
+
+
+<div class="container-fluid pt-5c" id="createproductform">
+    <div class="text-center mb-4">
+        <h2 class="section-title px-5"><span class="px-2">Update Product</span></h2>
+    </div>
+    <div class="row px-xl-5">
+        <div class="col-lg-7 mb-5">
+            <div class="contact-form">
+                <div id="success"></div>
+                <form name="sentMessage" id="editproduct" novalidate="novalidate">
+                    <div class="control-group mb-3">
+                        <input type="hidden" name="Id" value="@Model.Id" />
+                        <input name="Name" id="pname" type="text" class="form-control productformfont" placeholder="Product Name" value="@Model.Name" />
+
+                    </div>
+                    <div class="control-group mb-3">
+                        <input name="Description" id="pdesc" class="form-control productformfont" placeholder="Description" value="@Model.Description" />
+                    </div>
+                    <div class="control-group mb-3">
+                        <input name="Price" id="pprice" class="form-control productformfont" placeholder="Price" value="@Model.Price"/>
+                    </div>
+                    <div class="control-group mb-3">
+                        <select name="CatId" class="form-control productformfont">
+                            @foreach (var cat in Model.AvailableCategories)
+                            {
+                                var selected = cat.Id == Model.CatId ? "selected" : string.Empty;
+                                <option value="@cat.Id" @selected>@cat.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="control-group mb-3">
+                        <input type="file" id="ImageUpload" />
+                        <input name="ImageUrl" id="ImageUrl" type="hidden" />
+                    </div>
+                    <div>
+                        <button class="btn btn-primary py-2 px-4" type="button" id="updatebtn">
+                            Update Product
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="col-lg-5 mb-5">
+            <div class="d-flex flex-column mb-3">
+
+                <img id="ProductImage" src="" style="border:2px solid #6F6F6F ;height:200px; width:200px" />
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+
+@*Post request for update product*@
+<script>
+
+    $("#updatebtn").click(function () {
+
+        var productdata = $("#editproduct").serialize();
+
+        alert(productdata)
+
+        $.ajax(
+            {
+                type: "Post",
+                url: "/Product/Edit",
+                data: productdata
+
+
+            })
+            .done(function (responce) {
+                $("#tablecontainer").html(responce);
+
+            })
+            .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                alert("Fail")
+            });
+
+    });
+</script>

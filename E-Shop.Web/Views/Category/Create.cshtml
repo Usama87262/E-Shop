@@ -3,17 +3,148 @@
     ViewBag.Title = "Create";
 }
 
-<h2>Create</h2>
 
-<form method="post">
+
+@*<form method="post" id="createProduct">
     <label>Name</label>
-    <input name="Name"/>
+    <input name="Name" />
     <br />
 
     <label>Description</label>
-    <input name="Description"/>
+    <input name="Description" />
     <br />
 
+    <label>Image</label>
+    <input name="ImageUrl" id="ImageUrl" type="hidden" />
+    <input type="file" id="ImageUpload" name="Image" />
+
+    <img id="categoryimage" style="border:2px solid black ;height:200px; width:200px" />
+    <br />
+    <label>Is Featured ?</label>
+    <input name="IsChecked" type="radio" value="true" />True
+    <input name="IsChecked" type="radio" value="false" />False
+    <br />
     <button type="submit">Add Category</button>
 
-</form>
+</form>*@
+
+
+<div class="container-fluid pt-5c" id="createproductform">
+    <div class="text-center mb-4">
+        <h2 class="section-title px-5"><span class="px-2">Create Category</span></h2>
+    </div>
+    <div class="row px-xl-5" >
+        <div class="col-lg-7 mb-5">
+            <div class="contact-form">
+                <div id="success"></div>
+                <form  name="sentMessage" id="createCategory" novalidate="novalidate">
+                    <div class="control-group mb-3">
+                        <input name="Name" id="pname" type="text" class="form-control productformfont" placeholder="Category Name" />
+                    </div>
+
+                    <div class="control-group mb-3">
+                        <input name="Description" id="pdesc" class="form-control productformfont" placeholder="Description" />
+                    </div>
+                    
+                    <div class="control-group mb-3">
+                        <label>Is Featured?</label>
+                        <div class="input-group">
+                            <div class="radio form-control">
+                                <label><input name="IsChecked" type="radio" value="true" /> True</label>
+                            </div>
+                            <div class="radio form-control">
+                                <label><input name="IsChecked" type="radio" value="false" /> False</label>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="control-group mb-3">
+                        <input name="ImageUrl" id="ImageUrl" type="hidden" />
+                        <input type="file" id="ImageUpload" name="Image" />
+                    </div>
+
+                    <div>
+                        <button class="btn btn-primary py-2 px-4" type="button" id="addcategory" >
+                            Add Category
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+        <div class="col-lg-5 mb-5">
+            <div class="d-flex flex-column mb-3">
+
+                <img id="categoryimage" style="border:2px solid #6F6F6F ;height:200px; width:200px" />
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+<script>
+
+    //post request for create category
+
+    $("#addcategory").click(function () {
+
+        var categorydata = $("#createCategory").serialize();
+
+        $.ajax({
+
+            type: 'Post',
+            url: '@Url.Action("Create", "Category")',
+            data: categorydata
+        })
+
+            .done(function (responce) {
+                debugger;
+                $("#tablecontainer").html(responce);
+                $("#createproductform").hide();
+            })
+
+            .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                alert("Fail");
+            })
+    })
+
+
+
+    //Image upload 
+
+    $("#ImageUpload").change(function () {
+
+        var element = this;
+        var formdata = new FormData();
+        var totalfiles = element.files.length;
+
+        for (var i = 0; i < totalfiles; i++) {
+            var file = element.files[i];
+            formdata.append("Photo", file);
+        }
+
+        $.ajax({
+            type: 'Post',
+            url: '/Shared/UploadImage',
+            dataType: 'json',
+            data: formdata,
+            contentType: false,
+            processData: false
+
+        })
+            .done(function (responce) {
+                
+                if (responce.Success) {
+
+                    $("#categoryimage").attr("src", responce.ImageURL);
+                    $("#ImageUrl").val(responce.ImageURL);
+                }
+
+            })
+
+    });
+</script>

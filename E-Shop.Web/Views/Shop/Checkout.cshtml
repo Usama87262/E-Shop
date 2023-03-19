@@ -1,0 +1,32 @@
+﻿@model E_Shop.Web.ViewModel.Chekoutviewmodel
+
+@{
+    ViewBag.Title = "Checkout";
+
+    decimal totalbill = 0;
+
+    if(Model.Cartproducts != null && Model.Cartproducts.Count>0)
+    {
+
+        foreach (var product in Model.Cartproducts)
+        {
+
+            var productquantity = Model.productsid.Where(pid => pid == product.Id).Count();
+
+            totalbill = totalbill + (productquantity * product.Price);
+            <div>
+                Name:@product.Name - Price:@product.Price - Quantity:@productquantity Total:@(product.Price * productquantity)
+            </div>
+        }
+
+        <div>
+            Total Bill: @totalbill
+        </div>
+
+
+    }
+
+}
+
+
+

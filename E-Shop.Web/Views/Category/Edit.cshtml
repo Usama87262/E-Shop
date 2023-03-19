@@ -2,11 +2,16 @@
 
 @{
     ViewBag.Title = "Edit";
+
+    var checktrue = Model.IsChecked ? "checked" : string.Empty;
+    var checkfalse = !Model.IsChecked ? "checked" : string.Empty;
+
+    var imageurl = !string.IsNullOrEmpty(Model.ImageUrl) ? Model.ImageUrl : "/Images/empty-image.png";
 }
 
-<h2>Edit Category</h2>
 
-<form method="post">
+
+@*<form method="post">
     <input type="hidden" name="Id" value="@Model.Id" />
 
     <label>Name</label>
@@ -17,7 +22,135 @@
     <input name="Description" value="@Model.Description" />
     <br />
 
+    <label>Is Featured ?</label>
+    <input name="IsChecked" type="radio" value="true" @checktrue />True
+    <input name="IsChecked" type="radio" value="false" @checkfalse />False
+    <br />
+
     <button type="submit">Edit Category</button>
 
-</form>
+</form>*@
 
+
+<div class="container-fluid pt-5c" id="Categoryform">
+    <div class="text-center mb-4">
+        <h2 class="section-title px-5"><span class="px-2">Update Category</span></h2>
+    </div>
+    <div class="row px-xl-5">
+        <div class="col-lg-7 mb-5">
+            <div class="contact-form">
+                <div id="success"></div>
+                <form name="sentMessage" id="editcategory" novalidate="novalidate">
+                    <div class="control-group mb-3">
+                        <input type="hidden" name="Id" value="@Model.Id" />
+                        <input name="Name" id="pname" type="text" class="form-control productformfont" placeholder="Category Name" value="@Model.Name" />
+
+                    </div>
+                    <div class="control-group mb-3">
+                        <input name="Description" id="pdesc" class="form-control productformfont" placeholder="Description" value="@Model.Description" />
+                    </div>
+                  
+                    <div class="control-group mb-3">
+                        <label>Is Featured?</label>
+                        <div class="input-group">
+                            <div class="radio form-control">
+                                <label><input name="IsChecked" type="radio" value="true" @checktrue/> True</label>
+                            </div>
+                            <div class="radio form-control">
+                                <label><input name="IsChecked" type="radio" value="false" @checkfalse/> False</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="control-group mb-3">
+                        <input type="file" id="ImageUpload" />
+                        <input name="ImageUrl" id="ImageUrl" type="hidden" value="@Model.ImageUrl" />
+                    </div>
+                    <div>
+                        <button class="btn btn-primary py-2 px-4" type="button" id="updatebtn">
+                            Update Category
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="col-lg-5 mb-5">
+            <div class="d-flex flex-column mb-3">
+
+                <img id="CategoryImage" src="@imageurl" style="border:2px solid #6F6F6F ;height:200px; width:200px" />
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+    // Post request for send Edit category Data
+
+    $("#updatebtn").click(function () {
+
+        var catdata = $("#editcategory").serialize();
+
+        $.ajax({
+
+            type: "Post",
+            url: '@Url.Action("Edit","Category")',
+            data: catdata
+
+        })
+
+            .done(function (responce) {
+
+                $("#tablecontainer").html(responce);
+                $("#Categoryform").hide();
+                focus
+            })
+            .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+
+                alert("Fail")
+            })
+
+
+    })
+
+
+    //Image Upload
+
+    $("#ImageUpload").change(function () {
+
+        var element = this;
+        var formdata = new FormData();
+        var totalfiles = element.files.length;
+
+        for (var i = 0; i < totalfiles; i++) {
+
+            var file = element.files[i];
+            formdata.append("Photo", file);
+        }
+
+        $.ajax({
+
+            type: 'Post',
+            url: '/Shared/UploadImage',
+            dataType: 'json',
+            data: formdata,
+            contentType: false,
+            processData: false,
+
+        })
+            .done(function (responce) {
+
+                if (responce.Success) {
+
+                    $("#CategoryImage").attr("src", responce.ImageURL);
+                    $("#ImageUrl").val(responce.ImageURL);
+
+                }
+            })
+
+
+    })
+
+
+</script>

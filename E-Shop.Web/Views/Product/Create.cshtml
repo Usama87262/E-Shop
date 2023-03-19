@@ -1,25 +1,115 @@
-﻿
+﻿@model List<E_Shop.Entities.Category>
+
 @{
     ViewBag.Title = "Create";
 }
 
-<h2>Create Product</h2>
+<div class="container-fluid pt-5c" id="createproductform">
+    <div class="text-center mb-4">
+        <h2 class="section-title px-5"><span class="px-2">Create Product</span></h2>
+    </div>
+    <div class="row px-xl-5">
+        <div class="col-lg-7 mb-5">
+            <div class="contact-form">
+                <div id="success"></div>
+                <form name="sentMessage" id="createProduct" novalidate="novalidate">
+                    <div class="control-group mb-3">
+                        <input name="Name" id="pname" type="text" class="form-control productformfont" placeholder="Product Name" />
 
-<form method="post">
-    <label>Name</label>
-    <input name="Name" />
-    <br />
+                    </div>
+                    <div class="control-group mb-3">
+                        <input name="Description" id="pdesc" class="form-control productformfont" placeholder="Description" />
+                    </div>
+                    <div class="control-group mb-3">
+                        <input name="Price" id="pprice" class="form-control productformfont" placeholder="Price" />
+                    </div>
+                    <div class="control-group mb-3">
+                        <select name="CatId" class="form-control productformfont">
+                            @foreach (var cat in Model)
+                            {
+                                <option value="@cat.Id">@cat.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="control-group mb-3">
+                        <input type="file" id="ImageUpload" />
+                        <input name="ImageUrl" id="ImageUrl" type="hidden" />
+                    </div>
+                    <div>
+                        <button class="btn btn-primary py-2 px-4" type="button" id="savebtn">
+                            Add Product
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="col-lg-5 mb-5">
+             <div class="d-flex flex-column mb-3">
+               
+                <img id="ProductImage" style="border:2px solid #6F6F6F ;height:200px; width:200px" />
+            </div>
+            
+        </div>
+    </div>
+</div>
 
-    <label>Description</label>
-    <input name="Description" />
-    <br />
 
-    <label>Price</label>
-    <input name="Price" />
-    <br />
+@*Post request for create product*@
+<script>
 
-    <button type="submit">Add Product</button>
+    $("#savebtn").click(function () {
+    
+        var productdata = $("#createProduct").serialize();
 
-</form>
+        alert(productdata);
+        $.ajax(
+            {
+                type: "Post",
+                url: "/Product/Create",
+                data: productdata
+            })
+            .done(function (responce) {
+                debugger;
+                $("#tablecontainer").html(responce);
+                $("#createproductform").hide();
 
+            })
+            .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                alert("Fail")
+            });
 
+    });
+
+    $("#ImageUpload").change(function () {
+
+        var element = this;
+        var formdata = new FormData();
+        var totalfiles = element.files.length;
+
+        for (var i = 0; i < totalfiles; i++) {
+            var file = element.files[i];
+            formdata.append("Photo", file);
+        }
+
+        $.ajax({
+            type: 'Post',
+            url: '/Shared/UploadImage',
+            dataType: 'json',
+            data: formdata,
+            contentType: false,
+            processData: false
+
+        })
+            .done(function (responce) {
+                debugger;
+                console.log(responce);
+                if (responce.Success) {
+
+                    $("#ProductImage").attr("src", responce.ImageURL);
+                    $("#ImageUrl").val(responce.ImageURL);
+                }
+
+            })
+
+    });
+</script>

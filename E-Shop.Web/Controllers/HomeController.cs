@@ -1,4 +1,7 @@
-﻿using System;
+﻿using E_Shop.Services;
+using E_Shop.Web.Models;
+using E_Shop.Web.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -8,9 +11,14 @@ namespace E_Shop.Web.Controllers
 {
     public class HomeController : Controller
     {
+        CategoriesService Categoryservice = new CategoriesService();
+
         public ActionResult Index()
         {
-            return View();
+            HomeViewModels model = new HomeViewModels();
+            model.FeaturedCategories = Categoryservice.GetFeaturedCategory();
+
+            return View(model);
         }
 
         public ActionResult About()

@@ -28,6 +28,26 @@ namespace E_Shop.Services
             }
         }
 
+        
+        public int GetCategoryCount(string search)
+        {
+            using (var cat = new E_ShopContext())
+            {
+                return cat.Categories.Where(category => category.Name != null && category.Name.Contains(search)).Count();
+            }
+
+        }
+
+
+
+        public List<Category> GetFeaturedCategory()
+        {
+            using (var cat = new E_ShopContext())
+            {
+                return cat.Categories.Where(x=>x.IsChecked && x.ImageUrl !=null).ToList();
+            }
+        }
+
         public Category getCatId(int id)
         {
             using (var cat = new E_ShopContext())

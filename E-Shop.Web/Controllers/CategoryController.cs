@@ -1,5 +1,6 @@
 ﻿using E_Shop.Entities;
 using E_Shop.Services;
+using E_Shop.Web.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,28 +16,39 @@ namespace E_Shop.Web.Controllers
         [HttpGet]
         public ActionResult Index()
         {
-            var catlist = Catservices.GetCategory();
-            return View(catlist);
+            return View();
         }
+
+        public ActionResult CategoryTable(string search)
+        {
+
+            CategorySearchViewModel model = new CategorySearchViewModel();
+            model.Searchterm = search;
+
+            var catlist = Catservices.GetCategory();
+
+            return PartialView(catlist);
+        }
+
 
         [HttpGet]
         public ActionResult Create()
         {
-            return View();
+            return PartialView();
         }
 
         [HttpPost]
         public ActionResult Create(Category Category)
         {
             Catservices.AddCategory(Category);
-            return RedirectToAction("Index");
+            return RedirectToAction("CategoryTable");
         }
 
         [HttpGet]
         public ActionResult Edit(int Id)
         {
             var catid = Catservices.getCatId(Id);
-            return View(catid);
+            return PartialView(catid);
         }
 
         [HttpPost]
@@ -57,9 +69,10 @@ namespace E_Shop.Web.Controllers
         public ActionResult Delete(Category category)
         {
             Catservices.DeleteCat(category.Id);
-            return RedirectToAction("Index");
-            
-            
+            return RedirectToAction("Index");    
         }
+
+        
+
     }
 }

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Data.Entity;
 
 namespace E_Shop.Services
 {
@@ -14,6 +15,8 @@ namespace E_Shop.Services
         {
             using (var prd = new E_ShopContext())
             {
+                prd.Entry(product).State = System.Data.Entity.EntityState.Unchanged;
+
                 prd.products.Add(product);
                 prd.SaveChanges();
             }
@@ -22,11 +25,22 @@ namespace E_Shop.Services
 
         public List<Product> GetProduct()
         {
+
             using (var prd = new E_ShopContext())
             {
-                return prd.products.ToList();
+                return prd.products.Include(x=>x.Category).ToList();
             }
         }
+
+
+        public List<Product> GetCartProduct(List<int> prdids)
+        {
+            using (var prd = new E_ShopContext())
+            {
+                return prd.products.Where(x => prdids.Contains(x.Id)).ToList();
+            }
+        }
+
 
         public Product GetPrdId(int id)
         {

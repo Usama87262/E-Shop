@@ -1,14 +1,16 @@
-﻿@model List<E_Shop.Entities.Category>
-
+﻿
 @{
     ViewBag.Title = "Index";
 }
 
-<h2>Category Details</h2>
+<div id="tablecontainer">
 
-@foreach (var category in Model)
-{
-    <h1>@category.Id</h1>
-    <h1>@category.Name</h1>
-    <h1>@category.Description</h1>
-}
+    @{ 
+        Html.RenderAction("CategoryTable");
+    }
+
+</div>
+
+<div id="actioncontainer">
+
+</div>
